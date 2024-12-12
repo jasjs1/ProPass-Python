@@ -2,6 +2,7 @@ import json
 import os
 import time
 
+
 os.system('cls' if os.name == 'nt' else 'clear')
 
 
@@ -32,6 +33,7 @@ def view_password(passwords):
         time.sleep(1)
     else:
         print(f"No password is on file for {website}")
+        time.sleep(1)
 
 def delete_password(passwords):
     website = input("Enter website to delete: ")
@@ -41,6 +43,8 @@ def delete_password(passwords):
         time.sleep(1)
     else:
         print(f"No password has been found for {website}.")
+        time.sleep(1)
+
 
 def main():
     file_path = "passwords.json"
