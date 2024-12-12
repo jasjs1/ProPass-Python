@@ -56,6 +56,7 @@ def create_gui_window():
     position_right = int(screen_width/2 - window_width/2)
     window.geometry(f"+{position_right}+{position_top}")
     
+    
     return window
 
 def main():
@@ -82,7 +83,7 @@ def main():
             delete_password(passwords)
         elif choice == '4':
             if window is None:
-                window = create_gui_window()
+            window = create_gui_window()
             window.deiconify()
             window.mainloop()
         elif choice == '5':
