@@ -1,5 +1,6 @@
 import json
 import os
+import time
 
 os.system('cls' if os.name == 'nt' else 'clear')
 
@@ -19,7 +20,8 @@ def add_password(passwords):
     username = input("Enter the username: ")
     password = input("Enter the password: ")
     passwords[website] = {"username": username, "password": password} 
-    print(f"Password for {website} has been added successfully.") 
+    print(f"Password for {website} has been added successfully.")
+    time.sleep(1)
 
 def view_password(passwords):
     website = input("Enter the website to view: ")
@@ -27,6 +29,7 @@ def view_password(passwords):
         print(f"Website: {website}")
         print(f"Username: {passwords[website]['username']}") 
         print(f"Password: {passwords[website]['password']}") 
+        time.sleep(1)
     else:
         print(f"No password is on file for {website}")
 
@@ -35,6 +38,7 @@ def delete_password(passwords):
     if website in passwords:
         del passwords[website]
         print(f"Password for {website} has been deleted. Data has been erased from your local computer for the password on {website}.")
+        time.sleep(1)
     else:
         print(f"No password has been found for {website}.")
 
@@ -43,7 +47,7 @@ def main():
     passwords = load_passwords(file_path)
 
     while True:
-        print("\nProPass Password Manager")
+        print("\nPROPASS PASSWORD MANAGER")
         print("1. Add a password to ProPass.")
         print("2. View a password that has been saved onto ProPass.")
         print("3. Delete a password that has been saved to ProPass.") 
