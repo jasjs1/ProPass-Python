@@ -1,6 +1,6 @@
 import json
 
-def get_master_password():
+def verify_master_password():
     with open("ProPass_written_files/account.json", "r") as file:
         data = json.load(file)
     
@@ -10,8 +10,8 @@ def get_master_password():
     else:
         return data["master_password"]
 
-master_password = get_master_password()
+master_password = verify_master_password()
 if master_password:
-    print("Master password:", master_password)
+    print("\n")
 else:
     print("No master password found.")
