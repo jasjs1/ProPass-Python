@@ -3,6 +3,9 @@ import os
 import time
 import tkinter as tk
 import threading
+import sys
+import termios
+import tty
 import getpass
 from account.account import check_for_account, create_account
 
@@ -22,10 +25,6 @@ def save_passwords(passwords, file_path="passwords.json"):
     with open(file_path, 'w') as file:
         json.dump(passwords, file, indent=4)
 
-
-import sys
-import termios
-import tty
 
 def input_with_dots(prompt=""):
     print(prompt, end='', flush=True)
