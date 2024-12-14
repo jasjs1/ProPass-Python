@@ -11,6 +11,10 @@ def create_account():
     password_max_length = 40
 
     while True:
+        os.system('cls' if os.name == 'nt' else 'clear')
+        print("ProPass: CLI Password Manager")
+        print("\nYou do not have an account with ProPass, please create an account.")
+        time.sleep(0.2)
         email_input = input("Your email: ")
         email_length = len(email_input)
 
@@ -47,7 +51,7 @@ def create_account():
                     write_account_data = {
                         "email": email_input,
                         "password": password_input,
-                        "is_student?": False,
+                        "is_student_account?": False,
                         "is_premium_subscriber?": False
                     }
 
@@ -62,6 +66,5 @@ def create_account():
 
                     print("ProPass account created. Welcome to the new way for storing passwords in the command line.")
                     return
-
 
 create_account()
