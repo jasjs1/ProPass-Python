@@ -12,11 +12,11 @@ def input_with_dots(prompt=""):
         print(prompt, end='', flush=True)
         while True:
             ch = msvcrt.getch()
-            if ch == b'\r' or ch == b'\n':
+            if ch in [b'\r', b'\n']:
                 print()
                 break
             elif ch == b'\x08':
-                if len(password) > 0:
+                if password:
                     password = password[:-1]
                     print('\b \b', end='', flush=True)
             else:
@@ -34,18 +34,17 @@ def input_with_dots(prompt=""):
                     print()
                     break
                 elif char == '\x7f':
-                    if len(password) > 0:
+                    if password:
                         password = password[:-1]
                         sys.stdout.write('\b \b')
                         sys.stdout.flush()
                 else:
                     password += char
-                    sys.stdout.write('*' + " ")
+                    sys.stdout.write('*')
                     sys.stdout.flush()
         finally:
             termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
     return password
-
 
 def create_account():
     email_min_length = 3
@@ -90,33 +89,43 @@ def create_account():
             time.sleep(0.5)
             os.system('cls' if os.name == 'nt' else 'clear')
             print(f"Email: {email_input}")
-            print(f"Password: {password_input}\n")
+            print(f"Password: {'*' * len(password_input)}\n")
             print("One last thing. We need for you to create a master password to view passwords on ProPass, please make this password something that you will remember and is secure.")
             master_password = input_with_dots("Master Password: ")
             os.system('cls' if os.name == 'nt' else 'clear')
             time.sleep(0.5)
-            print("Creating account...")
 
-            write_account_data = {
-                "email": email_input,
-                "password": password_input,
-                "master_password": master_password,
-                "is_student_account?": False,
-                "is_premium_subscriber?": False
-            }
+            os.system('cls' if os.name == 'nt' else 'clear')
+            print("Verify your information.\n")
+            print(f"Your email: {email_input}")
+            print(f"Your password: {'*' * len(password_input)}")
+            print(f"Master Password: {'*' * len(master_password)}")
+            print("If the information above looks correct, hit Y.")
+            verification_input = input("")
 
-            folder_path = 'ProPass_written_files'
-            if not os.path.exists(folder_path):
-                os.makedirs(folder_path)
+            if verification_input.upper() == "Y":
+                print("Creating account...")
 
-            file_path = os.path.join(folder_path, 'account.json')
+                write_account_data = {
+                    "email": email_input,
+                    "password": password_input,
+                    "master_password": master_password,
+                    "is_student_account?": False,
+                    "is_premium_subscriber?": False
+                }
 
-            with open(file_path, "w") as json_file:
-                json.dump(write_account_data, json_file, indent=4)
+                folder_path = 'ProPass_written_files'
 
-            print("ProPass account created. Welcome to the new way for storing passwords in the command line.")
-            return
+                if not os.path.exists(folder_path):
+                    os.makedirs(folder_path)
 
+                file_path = os.path.join(folder_path, 'account.json')
+
+                with open(file_path, "w") as json_file:
+                    json.dump(write_account_data, json_file, indent=4)
+
+                print("ProPass account created. Welcome to the new way for storing passwords in the command line.")
+                return
 
 def check_for_account():
     folder_path = 'ProPass_written_files'
@@ -126,6 +135,5 @@ def check_for_account():
         print("Account already exists.")
     else:
         create_account()
-
 
 check_for_account()
