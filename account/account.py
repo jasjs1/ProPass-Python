@@ -1,9 +1,14 @@
 import json
 import os
 import time
+import datetime
 import sys
 import termios
 import tty
+import uuid
+
+def create_user_ID():
+    return str(uuid.uuid4())
 
 def input_with_dots(prompt=""):
     password = ""
@@ -51,6 +56,7 @@ def create_account():
     email_max_length = 75
     password_min_length = 8
     password_max_length = 40
+    timestamp = datetime.datetime.now()
 
     while True:
         os.system('cls' if os.name == 'nt' else 'clear')
@@ -104,12 +110,17 @@ def create_account():
             verification_input = input("")
 
             if verification_input.upper() == "Y":
-                print("Creating account...")
+                print("\nCreating account...")
+                os.system('cls' if os.name == 'nt' else 'clear')
+                print(f"ProPass account has been created with: {email_input}.")
 
+                user_ID = create_user_ID()
                 write_account_data = {
                     "email": email_input,
                     "password": password_input,
                     "master_password": master_password,
+                    "user_ID": user_ID,
+                    "time_of_creation": timestamp.isoformat(),
                     "is_student_account?": False,
                     "is_premium_subscriber?": False
                 }
