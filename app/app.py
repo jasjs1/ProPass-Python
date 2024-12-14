@@ -10,6 +10,7 @@ import getpass
 import random
 from account.account import check_for_account, create_account
 from backend.verify_master_password import verify_master_password
+from backend.get_list_of_websites import extract_titles
 
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
@@ -57,30 +58,45 @@ def add_password(passwords):
     print(f"Password for {website} has been added successfully.")
     time.sleep(1)
 
-
 def view_password(passwords):
-    website = input("Enter the website to view: ")
-    master_password_input = input_with_dots("Your master password: ")
+    while True:
+        website = input("\nEnter the website to view (type /list to view all of the websites stored): ")
+
+        if website == "/list":
+            titles = extract_titles()
+            if titles:
+                print("Saved websites with passwords:", end=" " + "\n")
+                for title in titles:
+                    print(title, end=" ")
+                print()
+            else:
+                print("No websites found.")
+            continue 
+
+        
+        if website not in extract_titles():
+            print("Invalid website selection. Please choose a valid website from the list.")
+            continue 
+
+        master_password_input = input_with_dots("Your master password: ")
+
+        stored_master_password = verify_master_password()
+
+        if stored_master_password is None:
+            print("Could not retrieve master password. Exiting...")
+            return
+
+        if master_password_input == stored_master_password:
+            if website in passwords:
+                print(f"\nWebsite: {website}")
+                print(f"Username: {passwords[website]['username']}")
+                print(f"Password: {passwords[website]['password']}")
+            else:
+                print(f"No password is on file for {website}")
+            break
+            print("Incorrect master password. Access denied.")
+
     
-
-    stored_master_password = verify_master_password()
-
-    if stored_master_password is None:
-        print("Could not retrieve master password. Exiting...")
-        return
-
-    if master_password_input == stored_master_password:
-        if website in passwords:
-            print(f"\nWebsite: {website}")
-            print(f"Username: {passwords[website]['username']}")
-            print(f"Password: {passwords[website]['password']}")
-        else:
-            print(f"No password is on file for {website}")
-    else:
-        print("Incorrect master password. Access denied.")
-    
-    time.sleep(5)
-
 
 def delete_password(passwords):
     website = input("Enter website to delete: ")
@@ -104,7 +120,6 @@ def create_gui_window():
     window = tk.Tk()
     window.title("ProPass Password Generator")
     
-    # Center the window on the screen
     screen_width = window.winfo_screenwidth()
     screen_height = window.winfo_screenheight()
     window_width = 400
@@ -127,7 +142,6 @@ def open_gui_thread():
     threading.Thread(target=create_gui_window, daemon=True).start()
 
 def main():
-    # Check for account
     check_for_account()
 
     file_path = "passwords.json"
