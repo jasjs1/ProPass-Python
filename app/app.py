@@ -60,7 +60,7 @@ def add_password(passwords):
 
 def view_password(passwords):
     website = input("Enter the website to view: ")
-    master_password_input = input("Your master password: ")
+    master_password_input = input_with_dots("Your master password: ")
     
 
     stored_master_password = verify_master_password()
