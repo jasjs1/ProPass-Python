@@ -3,6 +3,7 @@ import os
 import time
 import tkinter as tk
 import threading
+import getpass
 from account.account import check_for_account, create_account
 
 
@@ -22,13 +23,43 @@ def save_passwords(passwords, file_path="passwords.json"):
         json.dump(passwords, file, indent=4)
 
 
+import sys
+import termios
+import tty
+
+def input_with_dots(prompt=""):
+    print(prompt, end='', flush=True)
+    password = ""
+    fd = sys.stdin.fileno()
+    old_settings = termios.tcgetattr(fd)
+    try:
+        tty.setraw(fd)
+        while True:
+            char = sys.stdin.read(1)
+            if char in ('\n', '\r'):
+                print()
+                break
+            elif char == '\x7f':
+                if len(password) > 0:
+                    password = password[:-1]
+                    sys.stdout.write('\b \b')
+                    sys.stdout.flush()
+            else:
+                password += char
+                sys.stdout.write('*' + ' ')
+                sys.stdout.flush()
+    finally:
+        termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
+    return password
+
 def add_password(passwords):
     website = input("What website is using this password? ")
     username = input("Enter the username: ")
-    password = input("Enter the password: ")
+    password = input_with_dots("Enter the password: ")
     passwords[website] = {"username": username, "password": password}
     print(f"Password for {website} has been added successfully.")
     time.sleep(1)
+
 
 
 def view_password(passwords):
