@@ -4,7 +4,6 @@ def get_master_password():
     with open("ProPass_written_files/account.json", "r") as file:
         data = json.load(file)
     
-    # Check if the "master_password" key is in the JSON data
     if "master_password" not in data:
         print("Error retrieving master password since there is no account.")
         return None
