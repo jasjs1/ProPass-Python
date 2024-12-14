@@ -67,7 +67,7 @@ def view_password(passwords):
             if titles:
                 print("Saved websites with passwords:", end=" " + "\n")
                 for title in titles:
-                    print(title, end=" ")
+                    print(title.title(), end=" ")
                 print()
             else:
                 print("No websites found.")
