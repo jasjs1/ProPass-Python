@@ -7,12 +7,12 @@ import sys
 import termios
 import tty
 import getpass
+import random
 from account.account import check_for_account, create_account
-
+from backend.verify_master_password import verify_master_password
 
 def clear_screen():
     os.system('cls' if os.name == 'nt' else 'clear')
-
 
 def load_passwords(file_path="passwords.json"):
     if os.path.exists(file_path):
@@ -20,11 +20,9 @@ def load_passwords(file_path="passwords.json"):
             return json.load(file)
     return {}
 
-
 def save_passwords(passwords, file_path="passwords.json"):
     with open(file_path, 'w') as file:
         json.dump(passwords, file, indent=4)
-
 
 def input_with_dots(prompt=""):
     print(prompt, end='', flush=True)
@@ -60,16 +58,28 @@ def add_password(passwords):
     time.sleep(1)
 
 
-
 def view_password(passwords):
     website = input("Enter the website to view: ")
-    if website in passwords:
-        print(f"Website: {website}")
-        print(f"Username: {passwords[website]['username']}")
-        print(f"Password: {passwords[website]['password']}")
+    master_password_input = input("Your master password: ")
+    
+
+    stored_master_password = verify_master_password()
+
+    if stored_master_password is None:
+        print("Could not retrieve master password. Exiting...")
+        return
+
+    if master_password_input == stored_master_password:
+        if website in passwords:
+            print(f"\nWebsite: {website}")
+            print(f"Username: {passwords[website]['username']}")
+            print(f"Password: {passwords[website]['password']}")
+        else:
+            print(f"No password is on file for {website}")
     else:
-        print(f"No password is on file for {website}")
-    time.sleep(1)
+        print("Incorrect master password. Access denied.")
+    
+    time.sleep(5)
 
 
 def delete_password(passwords):
@@ -81,12 +91,10 @@ def delete_password(passwords):
         print(f"No password has been found for {website}.")
     time.sleep(1)
 
-
 def generate_password():
     characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890/.,';:'[]\\|][{=}-_)(*&^%$#@!)"
     password = ''.join(random.choice(characters) for _ in range(40))
     return password
-
 
 def create_gui_window():
     def handle_generate():
@@ -115,10 +123,8 @@ def create_gui_window():
 
     window.mainloop()
 
-
 def open_gui_thread():
     threading.Thread(target=create_gui_window, daemon=True).start()
-
 
 def main():
     # Check for account
@@ -153,7 +159,6 @@ def main():
             time.sleep(1)
 
         save_passwords(passwords, file_path)
-
 
 if __name__ == "__main__":
     main()
