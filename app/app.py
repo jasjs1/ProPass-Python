@@ -5,6 +5,8 @@ import random
 import termios
 import sys
 import tty
+import uuid
+from datetime import datetime
 from account.account import check_for_account, create_account
 from backend.verify_master_password import verify_master_password
 from backend.get_list_of_websites import extract_titles
@@ -16,7 +18,7 @@ def clear_screen():
 def save_passwords(passwords, file_path="passwords.json"):
     with open(file_path, 'w') as file:
         json.dump(passwords, file, indent=4)
-        
+
 def input_with_dots(prompt=""):
     print(prompt, end='', flush=True)
     password = ""
@@ -36,7 +38,7 @@ def input_with_dots(prompt=""):
                     sys.stdout.flush()
             else:
                 password += char
-                sys.stdout.write('*' + ' ')
+                sys.stdout.write('*')
                 sys.stdout.flush()
     finally:
         termios.tcsetattr(fd, termios.TCSADRAIN, old_settings)
@@ -46,23 +48,29 @@ def add_password(passwords):
     website = input("What website is using this password? ")
     username = input("Enter the username: ")
     password = input_with_dots("Enter the password: ")
-    passwords[website] = {"username": username, "password": password}
+    timestamp = datetime.now().isoformat()  
+    unique_id = str(uuid.uuid4()) 
+
+    passwords[website] = {
+        "username": username,
+        "password": password,
+        "timestamp": timestamp,
+        "UUID": unique_id
+    }
     print(f"Password for {website} has been added successfully.")
     time.sleep(1)
-
 
 def view_password(passwords):
     while True:
         website = input("\nEnter the website to view (type /list to view all of the websites stored): ")
 
-        # Cache titles to avoid repeated calls to extract_titles()
         titles = extract_titles()
 
         if website == "/list":
             if titles:
-                print("Saved websites with passwords:", end=" " + "\n")
+                print("Saved websites with passwords:\n")
                 for title in titles:
-                    print(title.title(), end=" ")
+                    print(f"- {title.title()}")
                 print()
             else:
                 print("No websites found.")
@@ -85,6 +93,8 @@ def view_password(passwords):
                 print(f"\nWebsite: {website}")
                 print(f"Username: {passwords[website]['username']}")
                 print(f"Password: {passwords[website]['password']}")
+                print(f"Timestamp: {passwords[website]['timestamp']}")
+                print(f"UUID: {passwords[website]['UUID']}")
             else:
                 print(f"No password is on file for {website}")
             break
@@ -134,7 +144,6 @@ def main():
             time.sleep(1)
 
         save_passwords(passwords, file_path)
-
 
 if __name__ == "__main__":
     main()
