@@ -48,9 +48,8 @@ def add_password(passwords):
     website = input("What website is using this password? ")
     username = input("Enter the username: ")
     password = input_with_dots("Enter the password: ")
-    timestamp = datetime.now().isoformat()  
-    unique_id = str(uuid.uuid4()) 
-
+    timestamp = datetime.now().isoformat()
+    unique_id = str(uuid.uuid4())
     passwords[website] = {
         "username": username,
         "password": password,
@@ -63,9 +62,7 @@ def add_password(passwords):
 def view_password(passwords):
     while True:
         website = input("\nEnter the website to view (type /list to view all of the websites stored): ")
-
         titles = extract_titles()
-
         if website == "/list":
             if titles:
                 print("Saved websites with passwords:\n")
@@ -75,19 +72,14 @@ def view_password(passwords):
             else:
                 print("No websites found.")
             continue
-
         if website not in titles:
             print("Invalid website selection. Please choose a valid website from the list.")
-            continue 
-
+            continue
         master_password_input = input_with_dots("Your master password: ")
-
         stored_master_password = verify_master_password()
-
         if stored_master_password is None:
             print("Could not retrieve master password. Exiting...")
             return
-
         if master_password_input == stored_master_password:
             if website in passwords:
                 print(f"\nWebsite: {website}")
@@ -103,24 +95,32 @@ def view_password(passwords):
 
 def delete_password(passwords):
     website = input("Enter website to delete: ")
-    if website in passwords:
-        del passwords[website]
-        print(f"Password for {website} has been deleted.")
+    master_password_input = input_with_dots("Enter your master password: ")
+    stored_master_password = verify_master_password()
+
+    if stored_master_password is None:
+        print("Could not retrieve master password. Exiting...")
+        return
+
+    if master_password_input == stored_master_password:
+        if website in passwords:
+            del passwords[website]
+            print(f"Password for {website} has been deleted.")
+        else:
+            print(f"No password has been found for {website}.")
     else:
-        print(f"No password has been found for {website}.")
+        print("Incorrect master password. Access denied.")
     time.sleep(1)
+
 
 def generate_password():
     characters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890/.,';:'[]\\|][{=}-_)(*&^%$#@!)"
-    password = ''.join(random.choice(characters) for _ in range(40))
-    return password
+    return ''.join(random.choice(characters) for _ in range(40))
 
 def main():
     check_for_account()
-
     file_path = "passwords.json"
     passwords = load_passwords(file_path)
-
     while True:
         clear_screen()
         print("\nPROPASS PASSWORD MANAGER")
@@ -128,9 +128,7 @@ def main():
         print("2. View a password that has been saved onto ProPass.")
         print("3. Delete a password that has been saved to ProPass.")
         print("4. Exit/Terminate program.")
-
         choice = input("\nChoice: ")
-
         if choice == '1':
             add_password(passwords)
         elif choice == '2':
@@ -142,7 +140,6 @@ def main():
         else:
             print("Invalid. Must choose a number between 1 and 4 for ProPass to function.")
             time.sleep(1)
-
         save_passwords(passwords, file_path)
 
 if __name__ == "__main__":
