@@ -1,17 +1,11 @@
 import json
+import os
 
 def verify_master_password():
-    with open("ProPass_written_files/account.json", "r") as file:
-        data = json.load(file)
-    
-    if "master_password" not in data:
+    file_path = os.path.join("ProPass_written_files", "account.json")
+    if not os.path.exists(file_path):
         print("Error retrieving master password since there is no account.")
         return None
-    else:
-        return data["master_password"]
-
-master_password = verify_master_password()
-if master_password:
-    print("\n")
-else:
-    print("No master password found.")
+    with open(file_path, "r") as file:
+        data = json.load(file)
+    return data.get("master_password")
